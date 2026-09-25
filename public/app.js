@@ -288,7 +288,23 @@ function renderAssignments() {
           </div>`;
       }
       if (a.status === 'understaffed') {
-        // 整组无法完整匹配：标出未覆盖道具，不输出部分岗位表
+        // 整组无法完整匹配：标出未覆盖道具，不输出部分岗位表；附资格瓶颈诊断
+        const clusters = a.diagnosis && a.diagnosis.clusters ? a.diagnosis.clusters : [];
+        const diagHtml = clusters.length
+          ? `<div class="diag">
+              <div class="diag-title">🔍 资格瓶颈诊断 · 从未匹配岗位沿资格竞争关系追溯（瓶颈是整簇竞争，而非仅未覆盖道具本身）</div>
+              ${clusters
+                .map((c, i) => `
+                  <div class="diag-cluster">
+                    <div class="diag-gap">竞争簇 ${i + 1} · 缺口 ${c.gap} 人</div>
+                    <div class="diag-line"><span class="diag-label">涉及道具</span>${c.props.map((p) => `「${esc(p)}」`).join('、')}</div>
+                    <div class="diag-line"><span class="diag-label">可争人员</span>${c.staff.length
+                      ? c.staff.map((s) => esc(s)).join('、')
+                      : '（无人具备这些道具的搬运资格）'}</div>
+                  </div>`)
+                .join('')}
+            </div>`
+          : '';
         return `
           <div class="cue-item fail">
             <div class="cue-head">
@@ -299,7 +315,8 @@ function renderAssignments() {
             <ul class="cue-errors">
               <li>本组需 ${a.transferCount} 个同时执行的岗位，现有资格人员无法整组覆盖；未覆盖道具：${a.uncovered.map((p) => `「${esc(p)}」`).join('、')}</li>
             </ul>
-            <p class="hint">不输出部分岗位表 —— 请在 ⑦ 中补充人员或调整搬运资格，岗位表将自动重算。</p>
+            ${diagHtml}
+            <p class="hint">不输出部分岗位表 —— 请按上方诊断在 ⑦ 中补充人员或调整搬运资格，岗位表与诊断将自动重算。</p>
           </div>`;
       }
       const rows = a.positions

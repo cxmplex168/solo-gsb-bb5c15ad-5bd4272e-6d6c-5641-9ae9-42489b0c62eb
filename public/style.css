@@ -279,6 +279,22 @@ button:disabled { opacity: .55; cursor: wait; }
 #assignment-summary .sum-lack { color: var(--err); }
 #assignment-summary .sum-skip { color: var(--muted); }
 
+/* 资格瓶颈诊断（人手不足组的竞争簇分析） */
+.diag {
+  margin-top: 8px;
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: rgba(224, 164, 88, .06);
+  font-size: 13px;
+}
+.diag .diag-title { color: var(--accent2); font-size: 12px; margin: 2px 0 6px; }
+.diag-cluster { border-top: 1px solid var(--line); padding: 6px 0 2px; }
+.diag-cluster:first-of-type { border-top: none; padding-top: 2px; }
+.diag-gap { color: var(--err); font-weight: 600; margin-bottom: 2px; }
+.diag-line { margin: 2px 0; }
+.diag-label { color: var(--muted); font-size: 12px; margin-right: 8px; }
+
 #toast {
   position: fixed;
   bottom: 24px;
