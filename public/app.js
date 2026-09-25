@@ -263,6 +263,40 @@ function renderStaff() {
     .join('');
 }
 
+/* ---------- 资格瓶颈诊断（人手不足组：竞争簇、每簇缺口与道具/人员名单） ---------- */
+
+function diagnosisHtml(diagnosis) {
+  if (!diagnosis || !diagnosis.clusters || !diagnosis.clusters.length) return '';
+  const clusters = diagnosis.clusters
+    .map((c, ci) => {
+      const uncoveredSet = new Set(c.uncoveredProps);
+      const propChips = c.props
+        .map((p) => {
+          const miss = uncoveredSet.has(p);
+          return `<span class="bn-prop${miss ? ' miss' : ''}">${esc(p)}${miss ? '<span class="trace-tag">未匹配</span>' : ''}</span>`;
+        })
+        .join('');
+      const staffText = c.staff.length
+        ? c.staff.map((s) => `「${esc(s)}」`).join('、')
+        : '<em>无任何具备资格的人员</em>';
+      return `
+        <div class="bn-cluster">
+          <div class="bn-cluster-head">竞争簇 ${ci + 1}：<strong>缺 ${c.shortage} 人</strong>
+            <span class="hint">（簇内 ${c.props.length} 件道具争夺 ${c.staff.length} 名合格人员，最多只能排开 ${c.props.length - c.shortage} 个岗位）</span>
+          </div>
+          <div class="bn-line"><span class="bn-label">竞争道具</span>${propChips}</div>
+          <div class="bn-line"><span class="bn-label">合格人员</span>${staffText}</div>
+        </div>`;
+    })
+    .join('');
+  return `
+    <div class="bottleneck">
+      <div class="bn-title">🔍 资格瓶颈诊断 · 共缺 ${diagnosis.shortage} 人，${diagnosis.clusters.length} 个互不相通的竞争簇</div>
+      <p class="bn-intro hint">下列簇内道具只能由簇内人员搬运且道具多于人员，与簇外人员/资格无关；为簇内任一道具新增可搬人员（或为现有人员补授资格）即可缓解对应缺口。簇内已匹配的道具同样是瓶颈的一部分，不能只看当前未匹配道具。</p>
+      ${clusters}
+    </div>`;
+}
+
 function renderAssignments() {
   const list = state.assignments || [];
   const count = { ok: 0, understaffed: 0, skipped: 0 };
@@ -288,7 +322,7 @@ function renderAssignments() {
           </div>`;
       }
       if (a.status === 'understaffed') {
-        // 整组无法完整匹配：标出未覆盖道具，不输出部分岗位表
+        // 整组无法完整匹配：标出未覆盖道具，不输出部分岗位表；附资格瓶颈诊断
         return `
           <div class="cue-item fail">
             <div class="cue-head">
@@ -299,7 +333,8 @@ function renderAssignments() {
             <ul class="cue-errors">
               <li>本组需 ${a.transferCount} 个同时执行的岗位，现有资格人员无法整组覆盖；未覆盖道具：${a.uncovered.map((p) => `「${esc(p)}」`).join('、')}</li>
             </ul>
-            <p class="hint">不输出部分岗位表 —— 请在 ⑦ 中补充人员或调整搬运资格，岗位表将自动重算。</p>
+            ${diagnosisHtml(a.diagnosis)}
+            <p class="hint">不输出部分岗位表 —— 请在 ⑦ 中补充人员或调整搬运资格，岗位表与瓶颈诊断将自动重算。</p>
           </div>`;
       }
       const rows = a.positions

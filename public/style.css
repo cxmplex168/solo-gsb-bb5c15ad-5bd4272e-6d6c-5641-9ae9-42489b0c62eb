@@ -279,6 +279,48 @@ button:disabled { opacity: .55; cursor: wait; }
 #assignment-summary .sum-lack { color: var(--err); }
 #assignment-summary .sum-skip { color: var(--muted); }
 
+/* 资格瓶颈诊断 */
+.bottleneck {
+  margin-top: 8px;
+  border: 1px dashed var(--accent2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: rgba(143, 111, 216, .06);
+  font-size: 13px;
+}
+.bn-title { color: var(--accent2); font-size: 13px; font-weight: 600; margin: 2px 0 4px; }
+.bn-intro { font-size: 12px; margin: 0 0 8px; }
+.bn-cluster {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  padding: 8px 10px;
+  margin: 6px 0;
+}
+.bn-cluster-head { font-size: 13px; margin-bottom: 6px; }
+.bn-cluster-head strong { color: var(--err); }
+.bn-cluster-head .hint { display: inline; margin: 0; font-size: 12px; }
+.bn-line { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 4px 0; }
+.bn-label {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1px 8px;
+}
+.bn-prop {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(143, 111, 216, .18);
+  border: 1px solid var(--accent2);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 13px;
+}
+.bn-prop.miss { background: rgba(224, 92, 106, .14); border-color: var(--err); color: var(--err); }
+.bn-prop .trace-tag { margin: 0 0 0 4px; font-size: 10px; padding: 0 6px; }
+
 #toast {
   position: fixed;
   bottom: 24px;
